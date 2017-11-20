@@ -4,7 +4,7 @@ var router = express.Router();
 var schedule = require('node-schedule');
 
 /* GET users listing. */
-var j = schedule.scheduleJob('*/60 * * * * *', function(){
+var j = schedule.scheduleJob('*/30 * * * * *', function(){
   console.log('Reacteer remains running!');
   screenshot("");
   screenshot("helse");
@@ -13,13 +13,6 @@ var j = schedule.scheduleJob('*/60 * * * * *', function(){
   screenshot("bolig");
   screenshot("teknologi");
   screenshot("bolig");
-
-
-  /*const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto('http://www.klikk.no/');
-  await page.screenshot({path: '../public/images/klikk.png', fullPage:true, omitBackground:true});
-  await browser.close();*/
 });
 
 screenshot = async (section) => {
@@ -28,17 +21,18 @@ screenshot = async (section) => {
     });
     try {
       const page = await browser.newPage();
+      await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
       await page.goto('http://www.klikk.no/' + section);
       await page.screenshot({
         path: 'public/images/klikk_' + section + '.png',
         fullPage:true,
-        omitBackground:true,
-        clip: {
+        omitBackground:true
+        /*clip: {
           x: 0,
           y: 0,
           width: 2500,
           height: 8000
-         }
+        } */
       });
     } catch(e) {
       console.log(e);
