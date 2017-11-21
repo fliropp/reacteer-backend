@@ -1,10 +1,20 @@
-var express = require('express');
-var puppeteer = require('puppeteer');
-var router = express.Router();
-var schedule = require('node-schedule');
+const express = require('express');
+const puppeteer = require('puppeteer');
+const router = express.Router();
+const schedule = require('node-schedule');
+const createPuppeteerPool = require('puppeteer-pool');
 
+const pool = createPuppeteerPool({
+  max: 10,
+  min: 2,
+  idleTimeoutMillis: 30000,
+  maxUses: 0,
+  validator: () => Promise.resolve(true),
+  testOnBorrow: true,
+  puppeteerArgs: []
+})
 
-var j = schedule.scheduleJob('* */10 * * * *', async () => {
+var j = schedule.scheduleJob('*/1 * * * *', async () => {
   console.log('Reacteer remains running!');
   await screenshot("");
   await screenshot("helse");
@@ -12,30 +22,28 @@ var j = schedule.scheduleJob('* */10 * * * *', async () => {
   await screenshot("motor");
   await screenshot("bolig");
   await screenshot("teknologi");
-  await screenshot("bolig");
 });
 
 const screenshot = async (section) => {
-  console.log("run section: " + section);
-  const browser = await puppeteer.launch({
-     args: ['--no-sandbox', '--disable-setuid-sandbox']
+  await pool.use(
+    async (browser) => {
+      console.log("run section: " + section);
+      const page = await browser.newPage();
+      await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
+      const status = await page.goto('http://www.klikk.no/' + section);
+      if(!status.ok){
+        throw new Error('Puppeteer Schmuppeteer...my a**')
+      }
+      await page.screenshot({
+        path: 'public/images/klikk_' + section + '.png',
+        fullPage:true,
+        omitBackground:true
+      });
+      await page.close();
+      return 'touchdown for section: ' + section;
+  }).then((result) => {
+    console.log('RESULT: ' + result )
   });
-  try {
-    const page = await browser.newPage();
-    await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-    await page.goto('http://www.klikk.no/' + section);
-    await page.screenshot({
-      path: 'public/images/klikk_' + section + '.png',
-      fullPage:true,
-      omitBackground:true
-    });
-  } catch(e) {
-    console.log(e);
-  } finally {
-    await browser.close();
-    console.log("shut down chromium");
-  }
-  console.log("end routine for section: " + section);
 }
 
 
