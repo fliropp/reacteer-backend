@@ -3,43 +3,40 @@ var puppeteer = require('puppeteer');
 var router = express.Router();
 var schedule = require('node-schedule');
 
-/* GET users listing. */
-var j = schedule.scheduleJob('*/30 * * * * *', function(){
+
+var j = schedule.scheduleJob('* */10 * * * *', async () => {
   console.log('Reacteer remains running!');
-  screenshot("");
-  screenshot("helse");
-  screenshot("mote");
-  screenshot("motor");
-  screenshot("bolig");
-  screenshot("teknologi");
-  screenshot("bolig");
+  await screenshot("");
+  await screenshot("helse");
+  await screenshot("mote");
+  await screenshot("motor");
+  await screenshot("bolig");
+  await screenshot("teknologi");
+  await screenshot("bolig");
 });
 
-screenshot = async (section) => {
-    const browser = await puppeteer.launch({
-       args: ['--no-sandbox', '--disable-setuid-sandbox']
+const screenshot = async (section) => {
+  console.log("run section: " + section);
+  const browser = await puppeteer.launch({
+     args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  try {
+    const page = await browser.newPage();
+    await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
+    await page.goto('http://www.klikk.no/' + section);
+    await page.screenshot({
+      path: 'public/images/klikk_' + section + '.png',
+      fullPage:true,
+      omitBackground:true
     });
-    try {
-      const page = await browser.newPage();
-      await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-      await page.goto('http://www.klikk.no/' + section);
-      await page.screenshot({
-        path: 'public/images/klikk_' + section + '.png',
-        fullPage:true,
-        omitBackground:true
-        /*clip: {
-          x: 0,
-          y: 0,
-          width: 2500,
-          height: 8000
-        } */
-      });
-    } catch(e) {
-      console.log(e);
-    } finally {
-      await browser.close();
-    }
+  } catch(e) {
+    console.log(e);
+  } finally {
+    await browser.close();
+    console.log("shut down chromium");
   }
+  console.log("end routine for section: " + section);
+}
 
 
 router.get('/', function(req, res, next) {
