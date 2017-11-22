@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 const router = express.Router();
 const schedule = require('node-schedule');
 const createPuppeteerPool = require('puppeteer-pool');
+const reacteer = require('./reacteerUtils/reacteerUtils.js');
 
 const pool = createPuppeteerPool({
   max: 10,
@@ -14,37 +15,25 @@ const pool = createPuppeteerPool({
   puppeteerArgs: []
 })
 
-var j = schedule.scheduleJob('*/1 * * * *', async () => {
+const j = schedule.scheduleJob('*/15 * * * * *', async () => {
   console.log('Reacteer remains running!');
-  await screenshot("");
-  await screenshot("helse");
-  await screenshot("mote");
-  await screenshot("motor");
-  await screenshot("bolig");
-  await screenshot("teknologi");
+  await reacteer.takeScreenshot("", pool);
+  await reacteer.takeScreenshot("helse", pool);
+  await reacteer.takeScreenshot("motor", pool);
+  await reacteer.takeScreenshot("mote", pool);
+  await reacteer.takeScreenshot("mat", pool);
+  await reacteer.takeScreenshot("bolig", pool);
+  await reacteer.takeScreenshot("teknologi", pool);
 });
 
-const screenshot = async (section) => {
-  await pool.use(
-    async (browser) => {
-      console.log("run section: " + section);
-      const page = await browser.newPage();
-      await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-      const status = await page.goto('http://www.klikk.no/' + section);
-      if(!status.ok){
-        throw new Error('Puppeteer Schmuppeteer...my a**')
-      }
-      await page.screenshot({
-        path: 'public/images/klikk_' + section + '.png',
-        fullPage:true,
-        omitBackground:true
-      });
-      await page.close();
-      return 'touchdown for section: ' + section;
-  }).then((result) => {
-    console.log('RESULT: ' + result )
-  });
-}
+const runLinkstats = async () => {
+  console.log("gittin there...1");
+  return await reacteer.linkStats("", pool);
+};
+
+const rct = async () => new Promise((resolve, reject) => {
+  setTimeout(() => resolve('react'), 5000)
+});
 
 
 router.get('/', function(req, res, next) {
@@ -52,49 +41,13 @@ router.get('/', function(req, res, next) {
   fend.then((f) => res.json({frontend: f , backend: xprss()}));
 });
 
+router.get('/linkstats', function(req, res, next) {
+  console.log("gittin there...0");
+  let lstats = runLinkstats();
+  console.log("gittin there...2");
 
-router.get('/img', function(req, res, next) {
-  (async() => {
-     const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-     });
-     try {
-        const page = await browser.newPage();
-        await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-        await page.goto('http://www.klikk.no/' + req.query.sec);
-        console.log(req.query.sec);
-        //let sh = await page.screenshot({fullPage: true, clip: {x:0, y: 0}});
-        let sh = await page.screenshot({
-          path: '../public/images/klikk.png',
-          clip: {
-            x: 0,
-            y: 0,
-            width: 2500,
-            height: 8000
-           }
-        });
-        res.writeHead(200, {
-           'Content-Type': 'image/png',
-           'Cache-Control': 'no-transform, max-age=' + 10 + ', s-maxage=' + 10
-        });
-        res.end(sh); // Send the file data to the browser.
-     } catch (e) {
-        console.log(e);
-     } finally {
-        browser.close();
-     }
-  })();
+  lstats.then((data) => res.json({frontend: data , backend: '...schmackend'}));
 });
-
-const rct = async () => new Promise((resolve, reject) => {
-  setTimeout(() => resolve('react'), 5000)
-});
-
-
-const xprss = () => {
-  return 'express'
-}
-
 
 
 module.exports = router;
