@@ -23,12 +23,12 @@ const j = schedule.scheduleJob('*/15 * * * * *', async () => {
   if(!lock) {
     lock = true;
     console.log('lock not set - run routine . . . ');
-    const report = await runLinkStats("", reacteer);
+    const report = await reacteer.linkStats("", pool);
+    await write2file("", report);
     lock = false;
   }else{
     console.log('lock is set - drop routine . . . ');
   }
-
 
   /*await reacteer.takeScreenshot("", pool);
   await reacteer.takeScreenshot("helse", pool);
@@ -39,10 +39,8 @@ const j = schedule.scheduleJob('*/15 * * * * *', async () => {
   await reacteer.takeScreenshot("teknologi", pool);*/
 });
 
-const runLinkStats = async (section, rcteer) => new Promise((resolve, reject) => {
-  console.log("gittin there...1");
-  const resultSet = await rcteer.linkStats(section, pool);
-  fs.writeFile("public/json/" + section !== ''? section:'klikk'  + '.json', JSON.stringify(resultSet), (err) =>{
+const write2file = async (section, data) => new Promise((resolve, reject) => {
+  fs.writeFile("public/json/" + section + '.json', JSON.stringify(data), (err) =>{
       if(err){
         reject(err);
       } else {
