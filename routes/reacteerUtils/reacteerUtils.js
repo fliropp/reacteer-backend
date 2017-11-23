@@ -23,6 +23,7 @@ module.exports = {
   },
 
   linkStats:  async (section, pool) => {
+
     return res = await pool.use(
       async (browser) => {
         console.log("get linkStats: " + section);
@@ -31,17 +32,22 @@ module.exports = {
         if(!status.ok){
           throw new Error('Puppeteer Schmuppeteer...my a**')
         }
-        const links = await page.evaluate(() => {
+        const tmpStatusMap = await page.evaluate(() => {
           const as = Array.from(document.querySelectorAll('a'));
-          return as.map(a => [a.textContent, a.href, test(a.href)]);
+          return as.map(a => {
+            return [a.textContent, a.href];
+          });
         });
-        await page.close();
-        return links;
+        const statusMap = [];
+        for(i = 0; i < 10/*tmpStatusMap.length*/; i++){
+          const page = await browser.newPage();
+          let sts = await page.goto(tmpStatusMap[i][1]);
+          await page.close();
+          console.log(sts.status, sts.url);
+          statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts]);
+        }
+        return statusMap;
     });
-
-    let test = (url) => {
-      return url + '______test';
-    }
   }
 
 

@@ -4,6 +4,7 @@ const router = express.Router();
 const schedule = require('node-schedule');
 const createPuppeteerPool = require('puppeteer-pool');
 const reacteer = require('./reacteerUtils/reacteerUtils.js');
+const fs = require('fs');
 
 const pool = createPuppeteerPool({
   max: 10,
@@ -13,23 +14,42 @@ const pool = createPuppeteerPool({
   validator: () => Promise.resolve(true),
   testOnBorrow: true,
   puppeteerArgs: []
-})
+});
+
+let lock = false;
 
 const j = schedule.scheduleJob('*/15 * * * * *', async () => {
   console.log('Reacteer remains running!');
-  await reacteer.takeScreenshot("", pool);
+  if(!lock) {
+    lock = true;
+    console.log('lock not set - run routine . . . ');
+    const report = await runLinkStats("", reacteer);
+    lock = false;
+  }else{
+    console.log('lock is set - drop routine . . . ');
+  }
+
+
+  /*await reacteer.takeScreenshot("", pool);
   await reacteer.takeScreenshot("helse", pool);
   await reacteer.takeScreenshot("motor", pool);
   await reacteer.takeScreenshot("mote", pool);
   await reacteer.takeScreenshot("mat", pool);
   await reacteer.takeScreenshot("bolig", pool);
-  await reacteer.takeScreenshot("teknologi", pool);
+  await reacteer.takeScreenshot("teknologi", pool);*/
 });
 
-const runLinkstats = async () => {
+const runLinkStats = async (section, rcteer) => new Promise((resolve, reject) => {
   console.log("gittin there...1");
-  return await reacteer.linkStats("", pool);
-};
+  const resultSet = await rcteer.linkStats(section, pool);
+  fs.writeFile("public/json/" + section !== ''? section:'klikk'  + '.json', JSON.stringify(resultSet), (err) =>{
+      if(err){
+        reject(err);
+      } else {
+        resolve(true);
+      }
+  });
+});
 
 const rct = async () => new Promise((resolve, reject) => {
   setTimeout(() => resolve('react'), 5000)
@@ -42,11 +62,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/linkstats', function(req, res, next) {
-  console.log("gittin there...0");
   let lstats = runLinkstats();
-  console.log("gittin there...2");
 
-  lstats.then((data) => res.json({frontend: data , backend: '...schmackend'}));
+  lstats.then((data) => res.json(JSON.stringify(data)));
 });
 
 
