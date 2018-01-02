@@ -1,6 +1,6 @@
 {
   "name": "reacteer-backend",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -11,10 +11,26 @@
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "jade": "~1.11.0",
+    "lighthouse": "^2.7.0",
     "morgan": "~1.9.0",
     "node-schedule": "^1.2.5",
     "puppeteer": "^0.13.0",
     "puppeteer-pool": "^1.0.3",
     "serve-favicon": "~2.4.5"
-  }
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fliropp/reacteer-backend.git"
+  },
+  "keywords": [
+    "puppeteer"
+  ],
+  "author": "are grottum",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fliropp/reacteer-backend/issues"
+  },
+  "homepage": "https://github.com/fliropp/reacteer-backend#readme",
+  "description": ""
 }

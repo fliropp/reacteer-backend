@@ -3,8 +3,10 @@ const puppeteer = require('puppeteer');
 const router = express.Router();
 const schedule = require('node-schedule');
 const createPuppeteerPool = require('puppeteer-pool');
-const reacteer = require('./reacteerUtils/reacteerUtils.js');
+const reacteer = require('./utils/reacteerUtils.js');
+const lighthousekeeper = require('./utils/lighthouseUtils.js');
 
+const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
 
 const pool = createPuppeteerPool({
   max: 10,
@@ -18,26 +20,34 @@ const pool = createPuppeteerPool({
 
 let lock = false;
 
-const j = schedule.scheduleJob('*/15 * * * * *', async () => {
+const j = schedule.scheduleJob('*/10 * * * * *', async () => {
   console.log('Reacteer remains running!');
   if(!lock) {
     lock = true;
     console.log('lock not set - run routine . . . ');
-    const report = await reacteer.puppeteer.linkStats("", pool);
-    await reacteer.utils.write2file("", report);
+    await runReacteerScan(reacteer, lighthousekeeper);
+    console.log('routine done - release lock . . . ');
     lock = false;
-  }else{
-    console.log('lock is set - drop routine . . . ');
   }
-
-  /*await reacteer.takeScreenshot("", pool);
-  await reacteer.takeScreenshot("helse", pool);
-  await reacteer.takeScreenshot("motor", pool);
-  await reacteer.takeScreenshot("mote", pool);
-  await reacteer.takeScreenshot("mat", pool);
-  await reacteer.takeScreenshot("bolig", pool);
-  await reacteer.takeScreenshot("teknologi", pool);*/
 });
+
+const runReacteerScan = async (r, l)=> {
+  index = []; i = 0;
+  sections.map(s => index.push(i++));
+  for(const idx of index){
+    console.log('run linkstats for ' + sections[idx] + '...');
+    let report = await r.puppeteer.linkStats(sections[idx], pool);
+    console.log('write ' + report.length + ' entries to file ' + sections[idx] + '.json...');
+    await r.utils.write2file(sections[idx], report);
+    console.log('take screenshot of section... ' + sections[idx]);
+    await r.puppeteer.takeScreenshot(sections[idx], pool);
+    console.log('get Lighthouse data for section klikk/' + sections[idx]);
+    let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
+    console.log(lighthouseData.audits);
+    await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
+
+  }
+}
 
 router.get('/', function(req, res, next) {
   let fend = rct();
