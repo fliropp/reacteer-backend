@@ -1,0 +1,86 @@
+const fs = require('fs');
+module.exports = {
+
+  puppeteer: {
+
+    takeScreenshot:  async (section, pool) => {
+      await pool.use(
+        async (browser) => {
+          console.log("getscreenshot for section: " + section);
+          const page = await browser.newPage();
+          await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
+          const status = await page.goto('http://www.klikk.no/' + section);
+          if(!status.ok){
+            throw new Error('Puppeteer Schmuppeteer...my a**')
+          }
+          await page.screenshot({
+            path: 'public/images/klikk_' + section + '.png',
+            fullPage:true,
+            omitBackground:true
+          });
+          await page.close();
+          return 'screenshots a\'ok 4 : ' + section;
+      }).then((result) => {
+        console.log('(takeScreenshot)RESULT: ' + result )
+      });
+    },
+
+    linkStats:  async (section, pool) => {
+
+      return res = await pool.use(
+        async (browser) => {
+          console.log("get linkStats: " + section);
+          const page = await browser.newPage();
+          const status = await page.goto('http://www.klikk.no/' + section);
+          if(!status.ok){
+            throw new Error('Puppeteer Schmuppeteer...my a**')
+          }
+          const tmpStatusMap = await page.evaluate(() => {
+            const as = Array.from(document.querySelectorAll('a'));
+            return as.map(a => {
+              return [a.textContent, a.href];
+            });
+          });
+          const statusMap = [];
+          for(i = 0; i < 3/*tmpStatusMap.length*/; i++){
+            const page = await browser.newPage();
+            try {
+              let sts = await page.goto(tmpStatusMap[i][1]);
+              await page.close();
+              console.log(sts.status, sts.url);
+              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts.status]);
+            } catch (error) {
+              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], error]);
+            }
+          }
+          return statusMap;
+      });
+    }
+  },
+
+  utils: {
+
+
+    write2file: async (section, data) => new Promise((resolve, reject) => {
+      fs.writeFile("public/json/klikk_" + section + '.json', JSON.stringify(data), (err) =>{
+          if(err){
+            reject(err);
+          } else {
+            resolve(true);
+          }
+      });
+    }),
+
+    readFromFile: async (path) => new Promise((resolve, reject) => {
+      fs.readFile(path, JSON.stringify(data), (err, data) =>{
+          if(err){
+            reject(err);
+          } else {
+            resolve(data);
+          }
+      });
+    })
+  }
+
+
+}
