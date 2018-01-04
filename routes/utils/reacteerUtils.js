@@ -6,7 +6,6 @@ module.exports = {
     takeScreenshot:  async (section, pool) => {
       await pool.use(
         async (browser) => {
-          console.log("getscreenshot for section: " + section);
           const page = await browser.newPage();
           await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
           const status = await page.goto('http://www.klikk.no/' + section);
@@ -29,7 +28,6 @@ module.exports = {
 
       return res = await pool.use(
         async (browser) => {
-          console.log("get linkStats: " + section);
           const page = await browser.newPage();
           const status = await page.goto('http://www.klikk.no/' + section);
           if(!status.ok){

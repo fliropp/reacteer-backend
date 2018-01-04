@@ -43,7 +43,6 @@ const runReacteerScan = async (r, l)=> {
     await r.puppeteer.takeScreenshot(sections[idx], pool);
     console.log('get Lighthouse data for section klikk/' + sections[idx]);
     let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
-    console.log(lighthouseData.audits);
     await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
 
   }
