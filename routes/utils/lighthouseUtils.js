@@ -9,7 +9,7 @@ module.exports = {
       flags = {output:'json'};
       return chromeLauncher.launch({chromeFlags: ['--headless', '--disable-gpu'], output:'json'}).then(chrome => {
         flags.port = chrome.port;
-        return lighthouse("http://www.klikk.no/" + section, flags, config).then(results =>
+        return lighthouse("http://www.klikk.no:80/" + section, flags, config).then(results =>
           chrome.kill().then(() => results));
       });
     }

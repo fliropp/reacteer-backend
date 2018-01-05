@@ -55,7 +55,7 @@ module.exports = {
             });
           });
           const statusMap = [];
-          for(i = 0; i < 3/*tmpStatusMap.length*/; i++){
+          for(i = 0; i < tmpStatusMap.length; i++){
             const page = await browser.newPage();
             try {
               let sts = await page.goto(tmpStatusMap[i][1]);
