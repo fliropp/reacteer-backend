@@ -26,13 +26,13 @@ const runReacteerScan = async (r, l)=> {
   index = []; i = 0;
   sections.map(s => index.push(i++));
   for(const idx of index){
-    console.log('run linkstats for ' + sections[idx] + '...');
+    /*console.log('run linkstats for ' + sections[idx] + '...');
     let report = await r.puppeteer.linkStats(sections[idx], pool);
     console.log('write ' + report.length + ' entries to file ' + sections[idx] + '.json...');
     await r.utils.write2file(sections[idx], report);
     console.log('take screenshot of section... ' + sections[idx]);
     await r.puppeteer.takeScreenshot(sections[idx], pool);
-    console.log('get Lighthouse data for section klikk/' + sections[idx]);
+    console.log('get Lighthouse data for section klikk/' + sections[idx]); */
     let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
     await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
   }
