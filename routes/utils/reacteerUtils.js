@@ -1,7 +1,22 @@
 const fs = require('fs');
+const createPuppeteerPool = require('puppeteer-pool');
+const puppeteer = require('puppeteer');
+
 module.exports = {
 
   puppeteer: {
+
+    createReacteerPool: async () => {
+      return createPuppeteerPool({
+        max: 10,
+        min: 2,
+        idleTimeoutMillis: 30000,
+        maxUses: 0,
+        validator: () => Promise.resolve(true),
+        testOnBorrow: true,
+        puppeteerArgs: []
+      });
+    },
 
     takeScreenshot:  async (section, pool) => {
       await pool.use(

@@ -2,21 +2,11 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const router = express.Router();
 const schedule = require('node-schedule');
-const createPuppeteerPool = require('puppeteer-pool');
 const reacteer = require('./utils/reacteerUtils.js');
 const lighthousekeeper = require('./utils/lighthouseUtils.js');
 
-const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
-
-const pool = createPuppeteerPool({
-  max: 10,
-  min: 2,
-  idleTimeoutMillis: 30000,
-  maxUses: 0,
-  validator: () => Promise.resolve(true),
-  testOnBorrow: true,
-  puppeteerArgs: []
-});
+//const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
+const sections = ['helse', 'motor', 'bolig'];
 
 let lock = false;
 
@@ -32,6 +22,7 @@ const j = schedule.scheduleJob('*/10 * * * * *', async () => {
 });
 
 const runReacteerScan = async (r, l)=> {
+  let pool = await reacteer.puppeteer.createReacteerPool();
   index = []; i = 0;
   sections.map(s => index.push(i++));
   for(const idx of index){
@@ -44,8 +35,8 @@ const runReacteerScan = async (r, l)=> {
     console.log('get Lighthouse data for section klikk/' + sections[idx]);
     let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
     await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
-
   }
+  pool.drain().then(() => pool.clear());
 }
 
 router.get('/', function(req, res, next) {
