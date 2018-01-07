@@ -5,8 +5,7 @@ const schedule = require('node-schedule');
 const reacteer = require('./utils/reacteerUtils.js');
 const lighthousekeeper = require('./utils/lighthouseUtils.js');
 
-//const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
-const sections = ['helse', 'motor', 'bolig'];
+const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
 
 let lock = false;
 

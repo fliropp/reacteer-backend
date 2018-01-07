@@ -5,6 +5,13 @@
 node_modules/
 .git/
 
+/public/images
+/public/json
+/public/lighthouse
+public/images/
+public/json/
+public/lighthouse/
+
 # testing
 /coverage
 
