@@ -1,0 +1,12 @@
+{ "urls":
+  [
+    {"section": "klikk", "url": "http://www.klikk.no/"} ,
+    {"section": "helse", "url": "http://www.klikk.no/helse"},
+    {"section": "motor", "url" : "http://www.klikk.no/motor"},
+    {"section": "bolig", "url" : "http://www.klikk.no/bolig"},
+    {"section": "mote", "url" : "http://www.klikk.no/mote"},
+    {"section": "mat", "url" : "http://www.klikk.no/mat"},
+    {"section": "teknologi", "url" : "http://www.klikk.no/teknologi"},
+    {"section": "egmont", "url" : "http://www.egmontpublishing.no/"}
+  ]
+}
