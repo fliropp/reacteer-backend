@@ -1,16 +1,16 @@
 { "urls":
   [
-    {"section": "egmont", "url": "http://www.egmontpublishing.no:80"},
-    {"section": "klikk", "url": "http://www.klikk.no:80"},
-    {"section": "side2", "url": "http://www.side2.no:80"},
-    {"section": "side3", "url": "http://www.side3.no:80"},
-    {"section": "blogg", "url": "http://www.blogg.no:80"},
-    {"section": "klikk-foreldre", "url": "http://www.klikk.no/foreldre:80"},
-    {"section": "egmontlive", "url": "http://www.egmontlive.no:80"},
-    {"section": "filmweb", "url": "http://www.filmweb.no:80"},
-    {"section": "egmontpeople", "url": "http://www.egmontpeople.no:80"},
-    {"section": "kvinneguiden", "url": "http://forum.kvinneguiden.no:80"},
-    {"section": "kryssord", "url": "http://www.kryssord.no:80"},
-    {"section": "egmontblogg", "url": "http://blogg.egmont.no:80"}
+    {"section": "egmont", "url": "http://www.egmontpublishing.no"},
+    {"section": "klikk", "url": "http://www.klikk.no"},
+    {"section": "side2", "url": "http://www.side2.no"},
+    {"section": "side3", "url": "http://www.side3.no"},
+    {"section": "blogg", "url": "http://www.blogg.no"},
+    {"section": "klikk-foreldre", "url": "http://www.klikk.no/foreldre"},
+    {"section": "egmontlive", "url": "http://www.egmontlive.no"},
+    {"section": "filmweb", "url": "http://www.filmweb.no"},
+    {"section": "egmontpeople", "url": "http://www.egmontpeople.no"},
+    {"section": "kvinneguiden", "url": "http://forum.kvinneguiden.no"},
+    {"section": "kryssord", "url": "http://www.kryssord.no"},
+    {"section": "egmontblogg", "url": "http://blogg.egmont.no"}
   ]
 }
