@@ -22,7 +22,7 @@ module.exports = {
       await pool.use(
         async (browser) => {
           const page = await browser.newPage();
-          await page.setViewport( { width: 1300, height: 1000, deviceScaleFactor: 1 } );
+          await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
           const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
