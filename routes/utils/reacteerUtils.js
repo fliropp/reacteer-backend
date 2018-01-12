@@ -23,17 +23,17 @@ module.exports = {
         async (browser) => {
           const page = await browser.newPage();
           await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-          const status = await page.goto('http://www.klikk.no/' + section);
+          const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
           await page.screenshot({
-            path: 'public/images/klikk_' + section + '.png',
+            path: 'public/images/' + section.section + '.png',
             fullPage:true,
             omitBackground:true
           });
           await page.close();
-          return 'screenshots a\'ok 4 : ' + section;
+          return 'screenshots a\'ok 4 : ' + section.section;
       }).then((result) => {
         console.log('(takeScreenshot)RESULT: ' + result )
       });
@@ -44,7 +44,8 @@ module.exports = {
       return res = await pool.use(
         async (browser) => {
           const page = await browser.newPage();
-          const status = await page.goto('http://www.klikk.no/' + section);
+          console.log(section);
+          const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
@@ -55,7 +56,7 @@ module.exports = {
             });
           });
           const statusMap = [];
-          for(i = 0; i < tmpStatusMap.length; i++){
+          for(i = 0; i < 5/*tmpStatusMap.length*/; i++){
             const page = await browser.newPage();
             try {
               let sts = await page.goto(tmpStatusMap[i][1]);
@@ -75,7 +76,7 @@ module.exports = {
 
 
     write2file: async (section, data) => new Promise((resolve, reject) => {
-      fs.writeFile("public/json/klikk_" + section + '.json', JSON.stringify(data), (err) =>{
+      fs.writeFile('public/json/' + section.section + '.json', JSON.stringify(data), (err) =>{
           if(err){
             reject(err);
           } else {

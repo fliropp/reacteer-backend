@@ -4,9 +4,10 @@ const router = express.Router();
 const schedule = require('node-schedule');
 const reacteer = require('./utils/reacteerUtils.js');
 const lighthousekeeper = require('./utils/lighthouseUtils.js');
+const urlset = require('./utils/resources/urls.json');
 
-const sections = ['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
-
+const sections = urlset.urls; //['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
+console.log(sections);
 let lock = false;
 
 const j = schedule.scheduleJob('*/10 * * * * *', async () => {
@@ -26,13 +27,13 @@ const runReacteerScan = async (r, l)=> {
   sections.map(s => index.push(i++));
   try {
     for(const idx of index){
-      console.log('run linkstats for ' + sections[idx] + '...');
+      console.log('run linkstats for ' + sections[idx].section + '...');
       let report = await r.puppeteer.linkStats(sections[idx], pool);
-      console.log('write ' + report.length + ' entries to file ' + sections[idx] + '.json...');
+      console.log('write ' + report.length + ' entries to file ' + sections[idx].section + '.json...');
       await r.utils.write2file(sections[idx], report);
-      console.log('take screenshot of section... ' + sections[idx]);
+      console.log('take screenshot of section... ' + sections[idx].section);
       await r.puppeteer.takeScreenshot(sections[idx], pool);
-      console.log('get Lighthouse data for section klikk/' + sections[idx]);
+      console.log('get Lighthouse data for section ' + sections[idx].section);
       let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
       await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
     }
