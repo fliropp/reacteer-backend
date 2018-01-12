@@ -1,12 +1,16 @@
 { "urls":
   [
-    {"section": "klikk", "url": "http://www.klikk.no/"} ,
-    {"section": "helse", "url": "http://www.klikk.no/helse"},
-    {"section": "motor", "url" : "http://www.klikk.no/motor"},
-    {"section": "bolig", "url" : "http://www.klikk.no/bolig"},
-    {"section": "mote", "url" : "http://www.klikk.no/mote"},
-    {"section": "mat", "url" : "http://www.klikk.no/mat"},
-    {"section": "teknologi", "url" : "http://www.klikk.no/teknologi"},
-    {"section": "egmont", "url" : "http://www.egmontpublishing.no/"}
+    {"section": "egmont", "url": "http://www.egmontpublishing.no"},
+    {"section": "klikk", "url": "http://www.klikk.no"},
+    {"section": "side2", "url": "http://www.side2.no"},
+    {"section": "side3", "url": "http://www.side3.no"},
+    {"section": "blogg", "url": "http://www.blogg.no"},
+    {"section": "klikk/foreldre", "url": "http://www.klikk.no/foreldre"},
+    {"section": "egmontlive", "url": "http://www.egmontlive.no"},
+    {"section": "filmweb", "url": "http://www.filmweb.no"},
+    {"section": "egmontpeople", "url": "http://www.egmontpeople.no"},
+    {"section": "kvinneguiden", "url": "http://forum.kvinneguiden.no"},
+    {"section": "kryssord", "url": "http://www.kryssord.no"},
+    {"section": "egmontblogg", "url": "http://blogg.egmont.no"}
   ]
 }
