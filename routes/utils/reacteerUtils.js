@@ -23,7 +23,7 @@ module.exports = {
         async (browser) => {
           const page = await browser.newPage();
           await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-          const status = await page.goto(section.url + ':80');
+          const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
@@ -45,7 +45,7 @@ module.exports = {
         async (browser) => {
           const page = await browser.newPage();
           console.log(section);
-          const status = await page.goto(section.url + ':80');
+          const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
@@ -59,7 +59,7 @@ module.exports = {
           for(i = 0; i < 5/*tmpStatusMap.length*/; i++){
             const page = await browser.newPage();
             try {
-              let sts = await page.goto(tmpStatusMap[i][1] + ':80');
+              let sts = await page.goto(tmpStatusMap[i][1]);
               await page.close();
               console.log(sts.status, sts.url);
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts.status]);
