@@ -14,7 +14,7 @@ module.exports = {
         maxUses: 0,
         validator: () => Promise.resolve(true),
         testOnBorrow: true,
-        puppeteerArgs: []
+        puppeteerArgs: ['--no-sandbox']
       });
     },
 
@@ -65,6 +65,7 @@ module.exports = {
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts.status]);
             } catch (error) {
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], error]);
+              await page.close();
             }
           }
           return statusMap;
