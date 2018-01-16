@@ -14,7 +14,7 @@ module.exports = {
         maxUses: 0,
         validator: () => Promise.resolve(true),
         testOnBorrow: true,
-        puppeteerArgs: ['--no-sandbox']
+        puppeteerArgs: []
       });
     },
 
