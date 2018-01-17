@@ -42,7 +42,9 @@ module.exports = {
     linkStats:  async (section, pool) => {
 
       return res = await pool.use(
+        console.log(pool);
         async (browser) => {
+          console.log(browser);
           const page = await browser.newPage();
           console.log(section);
           const status = await page.goto(section.url);
