@@ -4,6 +4,7 @@ const router = express.Router();
 const schedule = require('node-schedule');
 const reacteer = require('./utils/reacteerUtils.js');
 const lighthousekeeper = require('./utils/lighthouseUtils.js');
+const bigQuerykeeper = require('./utils/bigQueryUtils.js');
 const urlset = require('./utils/resources/urls.json');
 
 const sections = urlset.urls; //['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
@@ -15,7 +16,10 @@ const j = schedule.scheduleJob('*/10 * * * * *', async () => {
   if(!lock) {
     lock = true;
     console.log('lock not set - run routine . . . ');
-    await runReacteerScan(reacteer, lighthousekeeper);
+    const bqClient = await bigQuerykeeper.getClient();
+    console.log(bqClient);
+    await bigQuerykeeper.runQuery(bqClient);
+    //await runReacteerScan(reacteer, lighthousekeeper);
     console.log('routine done - release lock . . . ');
     lock = false;
   }
