@@ -16,9 +16,7 @@ const j = schedule.scheduleJob('*/10 * * * * *', async () => {
   if(!lock) {
     lock = true;
     console.log('lock not set - run routine . . . ');
-    const bqClient = await bigQuerykeeper.getClient();
-    console.log(bqClient);
-    await bigQuerykeeper.runQuery(bqClient);
+    await bigQuerykeeper.runQuery();
     //await runReacteerScan(reacteer, lighthousekeeper);
     console.log('routine done - release lock . . . ');
     lock = false;
