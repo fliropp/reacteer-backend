@@ -40,13 +40,10 @@ module.exports = {
     },
 
     linkStats:  async (section, pool) => {
-      console.log("1" + pool);
 
       return res = await pool.use(
         async (browser) => {
-          console.log("2:" + browser);
           const page = await browser.newPage();
-          console.log(section);
           const status = await page.goto(section.url);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
