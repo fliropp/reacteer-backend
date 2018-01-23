@@ -2,6 +2,12 @@ const fs = require('fs');
 const createPuppeteerPool = require('puppeteer-pool');
 const puppeteer = require('puppeteer');
 
+const timeout = {
+      networkIdleTimeout: 5000,
+      waitUntil: 'networkidle',
+      timeout: 15000
+  };
+
 module.exports = {
 
   puppeteer: {
@@ -23,11 +29,7 @@ module.exports = {
         async (browser) => {
           const page = await browser.newPage();
           await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-          const status = await page.goto(section.url, {
-                networkIdleTimeout: 5000,
-                waitUntil: 'networkidle',
-                timeout: 3000000
-            });
+          const status = await page.goto(section.url, timeout);
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
@@ -43,6 +45,7 @@ module.exports = {
             omitBackground:true
           });
           await page.close();
+          await browser.close();
           return 'screenshots a\'ok 4 : ' + section.section;
       }).then((result) => {
         console.log('(takeScreenshot)RESULT: ' + result )
@@ -53,9 +56,10 @@ module.exports = {
 
       return res = await pool.use(
         async (browser) => {
-          const page = await browser.newPage();
-          const status = await page.goto(section.url);
+          let page = await browser.newPage();
+          const status = await page.goto(section.url, timeout);
           if(!status.ok){
+            await page.close();
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
           const tmpStatusMap = await page.evaluate(() => {
@@ -66,17 +70,20 @@ module.exports = {
           });
           const statusMap = [];
           for(i = 0; i < tmpStatusMap.length; i++){
-            const page = await browser.newPage();
+            page = await browser.newPage();
             try {
-              let sts = await page.goto(tmpStatusMap[i][1]);
-              await page.close();
-              console.log(sts.status, sts.url);
+              console.log(tmpStatusMap.length);
+              let sts = await page.goto(tmpStatusMap[i][1], timeout);
+              console.log(sts.status, sts.url, i);
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts.status]);
-            } catch (error) {
-              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], error]);
-              await page.close();
+          }catch (error) {
+              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], 'ERR']);
+              console.log('log err inside linkStats: ' + error);
             }
           }
+          console.log("after for-loop");
+          await page.close();
+          await browser.close();
           return statusMap;
       });
     }
