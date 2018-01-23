@@ -23,7 +23,11 @@ module.exports = {
         async (browser) => {
           const page = await browser.newPage();
           await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-          const status = await page.goto(section.url);
+          const status = await page.goto(section.url, {
+                networkIdleTimeout: 5000,
+                waitUntil: 'networkidle',
+                timeout: 3000000
+            });
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
