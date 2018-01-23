@@ -72,17 +72,17 @@ module.exports = {
           for(i = 0; i < tmpStatusMap.length; i++){
             page = await browser.newPage();
             try {
-              console.log(tmpStatusMap.length);
               let sts = await page.goto(tmpStatusMap[i][1], timeout);
-              console.log(sts.status, sts.url, i);
-              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], sts.status]);
+              console.log((sts.status !== null? sts.status: 'PPTR_ERR'), sts.url, i);
+              statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], (sts.status !== null? sts.status: 'PPTR_ERR')]);
+              await page.close();
           }catch (error) {
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], 'ERR']);
               console.log('log err inside linkStats: ' + error);
+              await page.close();
             }
           }
           console.log("after for-loop");
-          await page.close();
           await browser.close();
           return statusMap;
       });
@@ -91,6 +91,11 @@ module.exports = {
 
   utils: {
 
+    removeDuplicatesFromArray: (arr) => {
+      return arrArg.filter((elem, pos, arr) => {
+        return arr.indexOf(elem) == pos;
+      });
+    },
 
     write2file: async (section, data) => new Promise((resolve, reject) => {
       fs.writeFile('public/json/' + section.section + '.json', JSON.stringify(data), (err) =>{
