@@ -31,9 +31,15 @@ module.exports = {
           if(!status.ok){
             throw new Error('Puppeteer Schmuppeteer...my a**')
           }
-          await page.screenshot({
+          let image = await page.screenshot({
             path: 'public/images/' + section.section + '.png',
-            fullPage:true,
+            //fullPage:true,
+            clip : {
+              x:0,
+              y:0,
+              width:1280,
+              height:5000,
+            }
             omitBackground:true
           });
           await page.close();
