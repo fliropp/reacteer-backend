@@ -39,7 +39,7 @@ module.exports = {
               y:0,
               width:1280,
               height:5000,
-            }
+            },
             omitBackground:true
           });
           await page.close();
