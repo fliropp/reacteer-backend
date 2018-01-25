@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 const timeout = {
       networkIdleTimeout: 5000,
       waitUntil: 'networkidle',
-      timeout: 15000
+      timeout: 30000
   };
 
 module.exports = {
@@ -25,51 +25,67 @@ module.exports = {
     },
 
     takeScreenshot:  async (section, pool) => {
+
       await pool.use(
         async (browser) => {
-          const page = await browser.newPage();
-          await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
-          const status = await page.goto(section.url, timeout);
-          if(!status.ok){
-            throw new Error('Puppeteer Schmuppeteer...my a**')
+          try {
+            const page = await browser.newPage();
+            await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
+            const status = await page.goto(section.url, timeout);
+            if(!status.ok){
+              throw new Error('Puppeteer Schmuppeteer...my a**')
+            }
+            let image = await page.screenshot({
+              path: 'public/images/' + section.section + '.png',
+              //fullPage:true,
+              clip : {
+                x:0,
+                y:0,
+                width:1280,
+                height:5000,
+              },
+              omitBackground:false
+            });
+            await page.close();
+            return 'screenshots a\'ok 4 : ' + section.section;
+          }catch(err) {
+            await page.close();
+            console.log('Screenshot for ' + section.section + 'could not be done . . .');
+            console.log('error: ' + err);
           }
-          let image = await page.screenshot({
-            path: 'public/images/' + section.section + '.png',
-            //fullPage:true,
-            clip : {
-              x:0,
-              y:0,
-              width:1280,
-              height:5000,
-            },
-            omitBackground:true
-          });
-          await page.close();
-          await browser.close();
-          return 'screenshots a\'ok 4 : ' + section.section;
-      }).then((result) => {
-        console.log('(takeScreenshot)RESULT: ' + result )
-      });
+        })
+        .then((result) => {
+          console.log('(takeScreenshot)RESULT: ' + result );
+          return true;
+        });
     },
 
     linkStats:  async (section, pool) => {
 
       return res = await pool.use(
         async (browser) => {
-          let page = await browser.newPage();
-          const status = await page.goto(section.url, timeout);
-          if(!status.ok){
-            await page.close();
-            throw new Error('Puppeteer Schmuppeteer...my a**')
-          }
-          const tmpStatusMap = await page.evaluate(() => {
-            const as = Array.from(document.querySelectorAll('a'));
-            return as.map(a => {
-              return [a.textContent, a.href];
+          let tmpStatusMap = [];
+          try {
+            let page = await browser.newPage();
+            const status = await page.goto(section.url, timeout);
+            if(!status.ok){
+              await page.close();
+              throw new Error('Puppeteer Schmuppeteer...my a**')
+            }
+            tmpStatusMap = await page.evaluate(() => {
+              const as = Array.from(document.querySelectorAll('a'));
+              return as.map(a => {
+                return [a.textContent, a.href];
+              });
             });
-          });
+            await page.close();
+          }catch(err) {
+            console.log('the page ' + section.section + 'could not be retrived. . .');
+            console.log('error: ' + err);
+            await page.close();
+          }
           const statusMap = [];
-          for(i = 0; i < tmpStatusMap.length; i++){
+          for(i = 0; i < 5 /*tmpStatusMap.length*/; i++){
             page = await browser.newPage();
             try {
               let sts = await page.goto(tmpStatusMap[i][1], timeout);
@@ -78,12 +94,12 @@ module.exports = {
               await page.close();
           }catch (error) {
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], 'ERR']);
-              console.log('log err inside linkStats: ' + error);
+              console.log('link status for : ' + tmpStatusMap[i][1] + 'could not be determined');
+              console.log('error: ' + error);
               await page.close();
             }
           }
           console.log("after for-loop");
-          await browser.close();
           return statusMap;
       });
     }
@@ -91,9 +107,9 @@ module.exports = {
 
   utils: {
 
-    removeDuplicatesFromArray: (arr) => {
-      return arrArg.filter((elem, pos, arr) => {
-        return arr.indexOf(elem) == pos;
+    removeDuplicateLinks: (links) => {
+      return links.sort().filter((elem, pos, arr) => {
+        return !pos || item != arr[pos - 1];
       });
     },
 
