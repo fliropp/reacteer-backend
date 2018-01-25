@@ -28,23 +28,25 @@ module.exports = {
 
       await pool.use(
         async (browser) => {
+          const page = await browser.newPage();
           try {
-            const page = await browser.newPage();
             await page.setViewport( { width: 1280, height: 1000, deviceScaleFactor: 1 } );
             const status = await page.goto(section.url, timeout);
             if(!status.ok){
               throw new Error('Puppeteer Schmuppeteer...my a**')
             }
+            const docHeight = await page.evaluate(() => document.body.scrollHeight);
+            console.log(docHeight);
             let image = await page.screenshot({
               path: 'public/images/' + section.section + '.png',
-              fullPage:true,
-              /*clip : {
+              //fullPage:true,
+              clip : {
                 x:0,
                 y:0,
                 width:1280,
-                height:5000,
-              },*/
-              omitBackground:false
+                height:docHeight,
+              },
+              omitBackground:true
             });
             await page.close();
             return 'screenshots a\'ok 4 : ' + section.section;
