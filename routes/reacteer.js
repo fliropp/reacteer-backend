@@ -27,15 +27,15 @@ const runReacteerScan = async (r, l)=> {
   sections.map(s => index.push(i++));
   try {
     for(const idx of index){
-      console.log('run linkstats for ' + sections[idx].section + '...');
+      /*console.log('run linkstats for ' + sections[idx].section + '...');
       let report = await reacteer.puppeteer.linkStats(sections[idx], pool);
       console.log('write ' + report.length + ' entries to file ' + sections[idx].section + '.json...');
-      r.utils.write2file(sections[idx], report);
+      r.utils.write2file(sections[idx], report);*/
       console.log('take screenshot of section... ' + sections[idx].section);
       await reacteer.puppeteer.takeScreenshot(sections[idx], pool);
-      console.log('get Lighthouse data for section ' + sections[idx].section);
+      /*console.log('get Lighthouse data for section ' + sections[idx].section);
       let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
-      await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);
+      await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);*/
     }
 }catch(err){
   console.log('Error cast to runReacteerScan: ' + err);
