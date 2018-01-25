@@ -37,13 +37,13 @@ module.exports = {
             }
             let image = await page.screenshot({
               path: 'public/images/' + section.section + '.png',
-              //fullPage:true,
-              clip : {
+              fullPage:true,
+              /*clip : {
                 x:0,
                 y:0,
                 width:1280,
                 height:5000,
-              },
+              },*/
               omitBackground:false
             });
             await page.close();
@@ -67,7 +67,7 @@ module.exports = {
           let tmpStatusMap = [];
           try {
             let page = await browser.newPage();
-            const status = await page.goto(section.url, timeout);
+            let status = await page.goto(section.url, timeout);
             if(!status.ok){
               await page.close();
               throw new Error('Puppeteer Schmuppeteer...my a**')
