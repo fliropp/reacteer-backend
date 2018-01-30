@@ -5,6 +5,9 @@ const schedule = require('node-schedule');
 const reacteer = require('./utils/reacteerUtils.js');
 const lighthousekeeper = require('./utils/lighthouseUtils.js');
 const urlset = require('./utils/resources/urls.json');
+const puppeteerPath = 'public/json/';
+const faviconPath = 'public/favicons/';
+const lighthousePath = 'public/lighthouse/';
 
 const sections = urlset.urls; //['', 'helse', 'motor', 'bolig', 'mote', 'mat', 'teknologi'];
 console.log(sections);
@@ -27,15 +30,17 @@ const runReacteerScan = async (r, l)=> {
   sections.map(s => index.push(i++));
   try {
     for(const idx of index){
-      /*console.log('run linkstats for ' + sections[idx].section + '...');
+      console.log('run linkstats for ' + sections[idx].section + '...');
       let report = await reacteer.puppeteer.linkStats(sections[idx], pool);
       console.log('write ' + report.length + ' entries to file ' + sections[idx].section + '.json...');
-      r.utils.write2file(sections[idx], report);*/
+      await r.utils.write2file(sections[idx], report, puppeteerPath, '.json');
       console.log('take screenshot of section... ' + sections[idx].section);
       let scrsh_ok = await reacteer.puppeteer.takeScreenshot(sections[idx], pool);
-      /*console.log('get Lighthouse data for section ' + sections[idx].section);
+      console.log('get Lighthouse data for section ' + sections[idx].section);
       let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
-      await lighthousekeeper.utils.write2file(sections[idx], lighthouseData);*/
+      await r.utils.write2file(sections[idx], lighthouseData, lighthousePath, '.json');
+      console.log("get favicon...");
+      await r.utils.getFavicon(sections[idx], faviconPath);
     }
   }catch(err){
     console.log('Error cast to runReacteerScan: ' + err);

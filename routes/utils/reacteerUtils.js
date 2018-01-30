@@ -1,6 +1,8 @@
 const fs = require('fs');
 const createPuppeteerPool = require('puppeteer-pool');
 const puppeteer = require('puppeteer');
+const fetch = require('node-fetch');
+
 
 const timeout = {
       networkIdleTimeout: 5000,
@@ -115,8 +117,8 @@ module.exports = {
       });
     },
 
-    write2file: async (section, data) => new Promise((resolve, reject) => {
-      fs.writeFile('public/json/' + section.section + '.json', JSON.stringify(data), (err) =>{
+    write2file: async (section, data, path, postFix) => new Promise((resolve, reject) => {
+      fs.writeFile(path + section.section + '.json', JSON.stringify(data), (err) =>{
           if(err){
             reject(err);
           } else {
@@ -133,8 +135,16 @@ module.exports = {
             resolve(data);
           }
       });
-    })
-  }
+    }),
+
+    getFavicon: async (section, path) => {
+      let response = await fetch('http://www.google.com/s2/favicons?domain=' + section.url);
+      let dest = fs.createWriteStream(path + section.section + '.png');
+      response.body.pipe(dest);
+    }
+  },
+
+
 
 
 }
