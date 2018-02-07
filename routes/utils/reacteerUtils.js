@@ -93,7 +93,7 @@ module.exports = {
             await page.close();
           }
           const statusMap = [];
-          for(i = 0; i < 5 /*tmpStatusMap.length*/; i++){
+          for(i = 0; i < tmpStatusMap.length; i++){
             try {
               page = await browser.newPage();
               let sts = await page.goto(tmpStatusMap[i][1], timeout);
