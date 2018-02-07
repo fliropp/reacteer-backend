@@ -72,16 +72,20 @@ module.exports = {
           try {
             let page = await browser.newPage();
             let status = await page.goto(section.url, timeout);
+
             if(!status.ok){
               await page.close();
               throw new Error('Puppeteer Schmuppeteer...my a**')
             }
+            console.log("status ok: " + status.ok);
             tmpStatusMap = await page.evaluate(() => {
               const as = Array.from(document.querySelectorAll('a'));
               return as.map(a => {
                 return [a.textContent, a.href];
               });
+
             });
+            console.log("number of links on page (" + section.section + "): " + tmpStatusMap.length)
             await page.close();
           }catch(err) {
             console.log('the page ' + section.section + 'could not be retrived. . .');

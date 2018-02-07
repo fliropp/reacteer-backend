@@ -27,23 +27,24 @@ const runReacteerScan = async (r, l)=> {
   let pool = await reacteer.puppeteer.createReacteerPool();
   index = []; i = 0;
   sections.map(s => index.push(i++));
-    for(const idx of index){
-      try {
-        console.log('run linkstats for ' + sections[idx].section + '...');
-        let report = await reacteer.puppeteer.linkStats(sections[idx], pool);
-        console.log('write ' + report.length + ' entries to file ' + sections[idx].section + '.json...');
-      //  await r.utils.write2file(sections[idx], report, puppeteerPath, '.json');
-        /*console.log('take screenshot of section... ' + sections[idx].section);
-        let scrsh_ok = await reacteer.puppeteer.takeScreenshot(sections[idx], pool);
-        console.log('get Lighthouse data for section ' + sections[idx].section);
-        let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
-        await r.utils.write2file(sections[idx], lighthouseData, lighthousePath, '.json');
-        console.log("get favicon...");
-        await r.utils.getFavicon(sections[idx], faviconPath);*/
-      }catch(err){
-        console.log('Error cast to runReacteerScan: ' + err);
-      }
+  for(const idx of index){
+    try {
+      console.log('run linkstats for ' + sections[idx].section + '...');
+      let report = await reacteer.puppeteer.linkStats(sections[idx], pool);
+      console.log('write ' + report.length + ' entries to file ' + sections[idx].section + '.json...');
+      await r.utils.write2file(sections[idx], report, puppeteerPath, '.json');
+      console.log('take screenshot of section... ' + sections[idx].section);
+      let scrsh_ok = await reacteer.puppeteer.takeScreenshot(sections[idx], pool);
+      console.log('get Lighthouse data for section ' + sections[idx].section);
+      let lighthouseData = await lighthousekeeper.lighthouse.lighthouseReport(sections[idx]);
+      await r.utils.write2file(sections[idx], lighthouseData, lighthousePath, '.json');
+      console.log("get favicon...");
+      await r.utils.getFavicon(sections[idx], faviconPath);
+    }catch(err){
+      console.log();
+      console.log('Error cast to runReacteerScan: ' + err);
     }
+  }
   console.log('drain pool . . .');
   pool.drain().then(() => pool.clear());
 }
