@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const timeout = {
       networkIdleTimeout: 5000,
       waitUntil: 'networkidle',
-      timeout: 30000
+      timeout: 20000
   };
 
 module.exports = {
@@ -90,13 +90,13 @@ module.exports = {
           }
           const statusMap = [];
           for(i = 0; i < 5 /*tmpStatusMap.length*/; i++){
-            page = await browser.newPage();
             try {
+              page = await browser.newPage();
               let sts = await page.goto(tmpStatusMap[i][1], timeout);
               console.log((sts.status !== null? sts.status: 'PPTR_ERR'), sts.url, i);
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], (sts.status !== null? sts.status: 'PPTR_ERR')]);
               await page.close();
-          }catch (error) {
+            }catch (error) {
               statusMap.push([tmpStatusMap[i][0], tmpStatusMap[i][1], 'ERR']);
               console.log('link status for : ' + tmpStatusMap[i][1] + 'could not be determined');
               console.log('error: ' + error);
@@ -138,9 +138,13 @@ module.exports = {
     }),
 
     getFavicon: async (section, path) => {
-      let response = await fetch('http://www.google.com/s2/favicons?domain=' + section.url);
-      let dest = fs.createWriteStream(path + section.section + '.png');
-      response.body.pipe(dest);
+      try {
+        let response = await fetch('http://www.google.com/s2/favicons?domain=' + section.url);
+        let dest = fs.createWriteStream(path + section.section + '.png');
+        response.body.pipe(dest);
+      }catch(err) {
+        console.log('error on getFavicon: '+ err);
+      }
     }
   },
 
